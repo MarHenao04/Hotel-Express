@@ -61,7 +61,7 @@ Si ocurre una falla técnica, el workflow **Manejador de errores** guarda un inc
 | Workflow | Archivo | Responsabilidad |
 |---|---|---|
 | Hotel (principal) | `workflows/[Hotel.json]` | Recibe el webhook, extrae el cuerpo, llama a los dos subworkflows, decide la ruta y responde. Nodos: `Webhook - Reserva` → `Extraer solicitud` → `Llamar a Preparar solicitud` → `¿Datos completos?` → `Llamar a Consultar disponibilidad` → `¿Hay habitación?` → `Crear reserva` → respuesta. |
-| Sub · Preparar solicitud | `workflows/[Sub_Preparar_solicitud.json]` | **Recibe:** nombre, email, fechas, huéspedes y tipo. **Devuelve:** `valido`, `errores`, `Cliente`, `Email`, `Entrada`, `Salida`, `Huespedes`, `Tipo`, `Noches`. No toca Baserow. |
+| Sub · Preparar solicitud | [workflows/(Sub_Preparar_solicitud.json)] | **Recibe:** nombre, email, fechas, huéspedes y tipo. **Devuelve:** `valido`, `errores`, `Cliente`, `Email`, `Entrada`, `Salida`, `Huespedes`, `Tipo`, `Noches`. No toca Baserow. |
 | Sub · Consultar disponibilidad | `workflows/[Sub_Consultar_disponibilidad.json]` | **Recibe:** `Tipo`, `Entrada`, `Salida`, `Huespedes`, `Email`. **Devuelve:** `disponible`, `duplicada`, `motivo`, `habitacion`, `reserva_existente_id`. Hace dos GET a Baserow y aplica la regla de cruce de fechas. Solo lee. |
 | Manejador de errores | `workflows/[Manejador_de_errores.json]` | Se activa con *Error Trigger*. Arma el incidente (fecha, workflow, nodo, mensaje, estado `pendiente_revision`) y lo guarda en `Incidencias`. Si no puede guardarlo, su ejecución queda en rojo. Registra, no repara. |
 
