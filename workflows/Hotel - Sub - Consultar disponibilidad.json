@@ -1,0 +1,196 @@
+{
+  "name": "Hotel - Sub - Consultar disponibilidad",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8473da38-dac8-4958-b9ec-6bb07501fe6b",
+      "name": "Recibir del principal"
+    },
+    {
+      "parameters": {
+        "url": "https://api.baserow.io/api/database/rows/table/1227774/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "user_field_names",
+              "value": "true"
+            },
+            {
+              "name": "filter__Tipo__equal",
+              "value": "={{ $json.Tipo }}"
+            },
+            {
+              "name": "filter__Activa__boolean",
+              "value": "true"
+            },
+            {
+              "name": "size",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.next }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.next }}",
+              "limitPagesFetched": true,
+              "maxRequests": 50
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "dee90f43-05e5-42ff-90a4-404c218af942",
+      "name": "Consultar habitaciones",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "o7UwWLNkVThjVlQQ",
+          "name": "Baserow hotel"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.baserow.io/api/database/rows/table/1227779/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "user_field_names",
+              "value": "true"
+            },
+            {
+              "name": "size",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.next }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.next }}",
+              "limitPagesFetched": true,
+              "maxRequests": 50
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "d8dde408-4615-41e3-9cf4-9e94da7275f9",
+      "name": "Consultar reservas",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "executeOnce": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "o7UwWLNkVThjVlQQ",
+          "name": "Baserow hotel"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = $('Recibir del principal').first().json;\nconst entrada = s.Entrada, salida = s.Salida;\nconst email = String(s.Email || '').toLowerCase();\n\n// Junta las filas de todas las páginas y verifica que la respuesta sea válida\nconst leer = (nombreNodo) => {\n  const paginas = $(nombreNodo).all();\n  const filas = [];\n  for (const p of paginas) {\n    if (!Array.isArray(p.json.results)) {\n      throw new Error('RESPUESTA_INESPERADA: \"' + nombreNodo + '\" no devolvio la lista results');\n    }\n    filas.push(...p.json.results);\n  }\n  if (paginas.length && paginas[paginas.length - 1].json.next) {\n    throw new Error('PAGINACION_INCOMPLETA: \"' + nombreNodo + '\" supero el maximo de paginas');\n  }\n  return filas;\n};\n\nconst habitaciones = leer('Consultar habitaciones');\nconst reservas = leer('Consultar reservas').filter(r => r.Estado === 'Confirmada');\nconst numerosDelTipo = habitaciones.map(h => String(h.Numero));\nconst base = { habitaciones_revisadas: habitaciones.length, reservas_revisadas: reservas.length };\n\n// 1) ¿Ya existe esta misma reserva? (mismo email, mismas fechas, habitación de este tipo)\nconst existente = reservas.find(r =>\n  String(r.Email || '').toLowerCase() === email &&\n  r.Entrada === entrada && r.Salida === salida &&\n  numerosDelTipo.includes(String(r.Habitacion)));\nif (existente) {\n  return [{ json: { ...base, disponible: false, duplicada: true, motivo: 'RESERVA_DUPLICADA',\n    habitacion: String(existente.Habitacion), reserva_existente_id: existente.id } }];\n}\n\n// 2) Una habitación está ocupada si una reserva confirmada se cruza con las fechas pedidas\nconst ocupada = (numero) => reservas.some(r =>\n  String(r.Habitacion) === numero && r.Entrada < salida && r.Salida > entrada);\n\n// 3) Primera habitación libre, ordenadas por número\nconst libre = habitaciones\n  .sort((a, b) => String(a.Numero).localeCompare(String(b.Numero), undefined, { numeric: true }))\n  .find(h => !ocupada(String(h.Numero)));\n\nreturn [{ json: { ...base, disponible: !!libre, duplicada: false,\n  motivo: libre ? 'DISPONIBLE' : 'SIN_DISPONIBILIDAD',\n  habitacion: libre ? String(libre.Numero) : null, reserva_existente_id: null } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "c3f062c5-cf8c-4dbd-b0d0-c71ad071e73f",
+      "name": "Determinar disponibilidad"
+    }
+  ],
+  "pinData": {
+    "Recibir del principal": [
+      {
+        "json": {
+          "Tipo": "Doble",
+          "Entrada": "2026-10-23",
+          "Salida": "2026-10-25",
+          "Huespedes": 2,
+          "Email": "prueba.nueva@example.com"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Recibir del principal": {
+      "main": [
+        [
+          {
+            "node": "Consultar habitaciones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar habitaciones": {
+      "main": [
+        [
+          {
+            "node": "Consultar reservas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar reservas": {
+      "main": [
+        [
+          {
+            "node": "Determinar disponibilidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "68c5f4b2-9bb6-4d13-9d64-e383199f1151",
+  "meta": {
+    "instanceId": "ddf9ddc63f991c82a4bbc96fac0a71dd99664184676caff455a75a3f795c14d0"
+  },
+  "nodeGroups": [],
+  "id": "UlZULVDEIsqkkOO1",
+  "tags": []
+}
