@@ -181,8 +181,8 @@ curl -X POST "http://localhost:5678/webhook-test/reserva-hotel" \
 ## 9. Documentación y evidencias
 
 - 📘 [Bitácora unificada](documentacion/Bitacora_Unificada_Proyecto.md)
-- 📊 [Presentación del proyecto (PDF)](documentacion/Presentacion_Proyecto_Reservas_Mejorado.pdf)
+- 📊 [Presentación del proyecto (PDF)](documentacion/Presentacion_Proyecto_Reservas_Hotel_Mejorado.pdf)
 - 🧭 Diagramas: [Proceso manual](documentacion/diagramas/Proceso_Manual.png) · [Proceso automatizado](documentacion/diagramas/Proceso_Automatizado.png)
-- 🧪 Evidencias: [Caso normal](documentacion/evidencias/Caso_Normal.png) · [Entrada no válida](documentacion/evidencias/Entrada_No_Valida.png) · [Fallo controlado](documentacion/evidencias/Fallo_Controlado.png)
+- 🧪 Evidencias: [Caso normal](documentacion/evidencias/Caso_Normal_Preparar.png) · [Entrada no válida](documentacion/evidencias/Entrada_No_Valida_Preparar.png) · [Fechas Libres](documentacion/evidencias/D01_Fechas_Libres.png) · [Cruce de fechas](documentacion/evidencias/D02_Cruce_Fechas.png)· [Reserva duplicada](documentacion/evidencias/D03_Reserva_Duplicada.png)
 - ⚙️ Workflows: carpeta [`workflows/`](workflows/)
 
