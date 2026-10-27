@@ -97,14 +97,16 @@ Recibir una solicitud de reserva, limpiar y validar sus datos, comprobar con las
 
 > Nota: este proceso describe cómo funciona el trabajo manual que se quiere reemplazar; el equipo no hizo un estudio de tiempos, por lo que no se citan cifras.
 
-![[Proceso_Manual.png]]
+![Proceso Manual](diagramas/Proceso_Manual.png)
+
 
 
 ### 2.2 Proceso automatizado
 
 Cómo cambia con n8n: la copia manual, la revisión de datos, la búsqueda de cruces y la detección de duplicados las hace el flujo en segundos; la persona solo interviene cuando hay un incidente técnico registrado.
 
-![[Proceso_Automatizado.png|700]]
+![Proceso Automatizado](diagramas/Proceso_Automatizado.png)
+
 
 
 ## 3. Funcionamiento de la solución
@@ -777,7 +779,7 @@ Baserow devuelve en `next` la URL de la siguiente página, o `null` en la últim
 
 | P-01                          |
 | ----------------------------- |
-| ![[Caso_Normal_Preparar.png]] |
+| ![Caso Normal Preparar](evidencias/Caso_Normal_Preparar.png) |
 
 #### P-02 · Entrada no válida (cuatro errores a la vez)
 
@@ -798,7 +800,7 @@ Baserow devuelve en `next` la URL de la siguiente página, o `null` en la últim
 
 | P-02                                |
 | ----------------------------------- |
-| ![[Entrada_No_Valida_Preparar.png]] |
+| ![Entrada No Valida Preparar](evidencias/Entrada_No_Valida_Preparar.png) |
 
 **Qué no demuestran:** una respuesta HTTP 400 recibida por un cliente real. Tampoco se probó cada regla por separado.
 
@@ -824,15 +826,15 @@ Baserow devuelve en `next` la URL de la siguiente página, o `null` en la últim
 
 | D-01                            |
 | ------------------------------- |
-| ![[D01_Fechas_Libres.png]]      |
+| ![D01 Fechas Libres](evidencias/D01_Fechas_Libres.png) |
 | D-02                            |
-| ![[D02_Cruce_Fechas.png]]       |
+| ![D02 Cruce Fechas](evidencias/D02_Cruce_Fechas.png) |
 | D-03                            |
-| ![[D03_Reserva_Duplicada.png]]  |
+| ![D03 Reserva Duplicada](evidencias/D03_Reserva_Duplicada.png) |
 | D-04                            |
-| ![[D04_Sin_Disponibilidad.png]] |
+| ![D04 Sin Disponibilidad](evidencias/D04_Sin_Disponibilidad.png) |
 | D-05                            |
-| ![[D05_Salida_Mismo_Dia.png]]   |
+| ![D05 Salida Mismo Dia](evidencias/D05_Salida_Mismo_Dia.png) |
 
 **Qué demuestran:** la lógica de decisión frente a los datos reales de las tablas.
 **Qué no:** una petición real por el Webhook ni la creación de una reserva.
@@ -841,9 +843,9 @@ Baserow devuelve en `next` la URL de la siguiente página, o `null` en la últim
 
 | ID   | Caso                                             | Entrada                                                                                                                                                                                     | Esperado                                                                     | Observado                                                                                                            | Evidencia                                               | Conclusión                                                                                                |
 | ---- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| M-01 | Mapeo del incidente (manual, fallo **simulado**) | JSON ficticio cargado con _Edit output_ en `Recibir fallo automatico` (sección 5.2 y JSON pinneado en el workflow): `execution.id: "231"`, mensaje con `[ref=Doble 2026-12-10..2026-12-12]` | Los 9 campos del incidente; `solicitud_ref` = `Doble 2026-12-10..2026-12-12` | Coincide; `solicitud_ref` salió limpio                                                                               | M-01<br><br>![[M01_Mapeo_Incidente 1.png\|68]]<br>      | Correcto. **No** demuestra que el Error Trigger se active ante un fallo real                              |
-| M-02 | Escritura persistente en `Incidencias`           | Salida de M-01                                                                                                                                                                              | Una fila nueva en Baserow con los mismos valores                             | Fila #3 en la tabla `Incidencias` con `Workflow`, `Ejecucion_ID` 231, `Solicitud_Ref` y `Estado: pendiente_revision` | M-02<br>![[M02_Fila_Incidencias.png\|68]]<br><br>       | Correcto. La evidencia está en Baserow, no solo en el OUTPUT de n8n. Los datos son simulados              |
-| M-03 | Falla el propio registro                         | Credencial o tabla inválida a propósito, en una copia                                                                                                                                       | El flujo toma la salida de error y `Registro no almacenado` queda en rojo    | La captura muestra la ruta de error y `Registro no almacenado` marcado como fallido                                  | M-03<br><br>![[M03_Registro_No_Almacenado.png]]<br><br> | Correcto en el canvas. `[COMPLETAR: añadir captura de Executions con la ejecución del manejador en rojo]` |
+| M-01 | Mapeo del incidente (manual, fallo **simulado**) | JSON ficticio cargado con _Edit output_ en `Recibir fallo automatico` (sección 5.2 y JSON pinneado en el workflow): `execution.id: "231"`, mensaje con `[ref=Doble 2026-12-10..2026-12-12]` | Los 9 campos del incidente; `solicitud_ref` = `Doble 2026-12-10..2026-12-12` | Coincide; `solicitud_ref` salió limpio                                                                               | M-01<br><br>![M01 Mapeo Incidente](evidencias/M01_Mapeo_Incidente.png)<br>      | Correcto. **No** demuestra que el Error Trigger se active ante un fallo real                              |
+| M-02 | Escritura persistente en `Incidencias`           | Salida de M-01                                                                                                                                                                              | Una fila nueva en Baserow con los mismos valores                             | Fila #3 en la tabla `Incidencias` con `Workflow`, `Ejecucion_ID` 231, `Solicitud_Ref` y `Estado: pendiente_revision` | M-02<br>![M02 Fila Incidencias](evidencias/M02_Fila_Incidencias.png)<br><br>       | Correcto. La evidencia está en Baserow, no solo en el OUTPUT de n8n. Los datos son simulados              |
+| M-03 | Falla el propio registro                         | Credencial o tabla inválida a propósito, en una copia                                                                                                                                       | El flujo toma la salida de error y `Registro no almacenado` queda en rojo    | La captura muestra la ruta de error y `Registro no almacenado` marcado como fallido                                  | M-03<br><br>![M03 Registro No Almacenado](evidencias/M03_Registro_No_Almacenado.png)<br><br> | Correcto en el canvas. `[COMPLETAR: añadir captura de Executions con la ejecución del manejador en rojo]` |
 
 **Pasos M-01:** abrir el manejador → en `Recibir fallo automatico` usar _Edit output_ y pegar el JSON → _Execute step_ en `Preparar registro del incidente` → comparar con lo esperado. Para M-02, continuar con `Guardar incidente en Baserow` y abrir la tabla.
 
