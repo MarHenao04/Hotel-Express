@@ -180,7 +180,7 @@ curl -X POST "http://localhost:5678/webhook-test/reserva-hotel" \
 
 ## 9. Documentación y evidencias
 
-- 📘 [Bitácora unificada](documentacion/Bitacora_Unificada_Proyecto.md)
+- 📘 [Bitácora unificada](documentacion/Bitacora_unificada.md)
 - 📊 [Presentación del proyecto (PDF)](documentacion/Presentacion_Proyecto_Reservas_Hotel_Mejorado.pdf)
 - 🧭 Diagramas: [Proceso manual](documentacion/diagramas/Proceso_Manual.png) · [Proceso automatizado](documentacion/diagramas/Proceso_Automatizado.png)
 - 🧪 Evidencias: [Caso normal](documentacion/evidencias/Caso_Normal_Preparar.png) · [Fechas Libres](documentacion/evidencias/D01_Fechas_Libres.png) · [Cruce de fechas](documentacion/evidencias/D02_Cruce_Fechas.png)· [Reserva duplicada] · [Cruce de fechas](documentacion/evidencias/D02_Cruce_Fechas.png)· [Sin disponibilidad](documentacion/evidencias/D04_Sin_Disponibilidad.png)· [Salida el mismo dia](documentacion/evidencias/D05_Salida_Mismo_Dia.png)· [Entrada no válida](documentacion/evidencias/Entrada_No_Valida_Preparar.png) · [Mapeo Incidente](documentacion/evidencias/M01_Mapeo_Incidente.png) · [Fila Incidencias](documentacion/evidencias/M02_Fila_Incidencias.png) · [Registro no almacenado](documentacion/evidencias/M03_Registro_No_Almacenado.png) 
