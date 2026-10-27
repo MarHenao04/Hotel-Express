@@ -81,7 +81,7 @@ Si ocurre una falla técnica, el workflow **Manejador de errores** guarda un inc
 
 ## 4. Requisitos
 
-- **n8n:** versión [x.x.x] (`Settings → About`), ejecutado en local.
+- **n8n:** versión [2.37.10] (`Settings → About`), ejecutado en local.
 - **Node.js:** para ejecutar `puente_reservas.cjs`.
 - **Cuentas:** Google (Forms y Apps Script), Baserow y Cloudflare (solo para el túnel).
 - **Tablas en Baserow:**
